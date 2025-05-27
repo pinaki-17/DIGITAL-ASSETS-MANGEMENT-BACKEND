@@ -1,4 +1,4 @@
-const { getDb } =  require('../Db/Db');
+const { getDb } = require('../Db/Db');
 const { ObjectId } = require('mongodb');
 
 const DigitalAssetsModel = {
@@ -16,23 +16,27 @@ const DigitalAssetsModel = {
         name: data.nodalOfficerNICName,
         empCode: data.nodalOfficerNICEmpCode,
         email: data.nodalOfficerNICEmail,
-        contactNumber: data.nodalOfficerNICContact
+        contactNumber: data.nodalOfficerNICContact,
       },
 
       nodalOfficerDept: {
         name: data.nodalOfficerDeptName,
         email: data.nodalOfficerDeptEmail,
-        contactNumber: data.nodalOfficerDeptContact
+        contactNumber: data.nodalOfficerDeptContact,
       },
 
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     const result = await db.collection('basicProfile').insertOne(user);
     return result.insertedId;
   },
 
- 
+  async createAsset(asset) {
+    const db = getDb();
+    const result = await db.collection('assets').insertOne(asset);
+    return result.insertedId;
+  },
 };
 
 module.exports = DigitalAssetsModel;

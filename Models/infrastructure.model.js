@@ -21,7 +21,6 @@ const InfrastructureModel = {
     const result = await db.collection('infrastructureDetails').insertOne(infrastructureDetails);
     return result.insertedId;
   },
-
   async getAllInfrastructureDetails() {
     const db = getDb();
     return await db.collection('infrastructureDetails').find({}).toArray();
@@ -29,7 +28,7 @@ const InfrastructureModel = {
 
   async getInfrastructureDetailsById(id) {
     const db = getDb();
-    return await db.collection('infrastructureDetails').findOne({ _id: new ObjectId(id) });
+    return await db.collection('infrastructureDetails').findOne({ assetsId : assetsId });
   },
 
   async updateInfrastructureDetails(id, data) {

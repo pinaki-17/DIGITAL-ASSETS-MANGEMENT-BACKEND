@@ -1,4 +1,9 @@
 const AssetsModel = require('../Models/assets.model');
+const AuditLogsModel = require('../Models/auditLogs.model');
+const InfrastructureModel = require('../Models/infrastructure.model');
+const StackModel = require('../Models/techstack.model');
+const {getDb} = require('../Db/Db')
+
 
 async function basicDetails(req,res){
     console.log(req.body);
@@ -12,6 +17,96 @@ async function basicDetails(req,res){
   }
 }
 
+// Controller to create a new audit log
+async function createAuditLog(req, res) {
+  try {
+    const auditLogId = await AuditLogsModel.createAuditLog(req.body);
+    res.status(201).json({ message: 'Audit log created successfully', auditLogId });
+  } catch (error) {
+    console.error('Error creating audit log:', error);
+    res.status(500).json({ error: 'Failed to create audit log' });
+  }
+}
+
+// Controller to create new infrastructure details
+async function createInfrastructureDetails(req, res) {
+  try {
+    const infrastructureDetailsId = await InfrastructureModel.createInfrastructureDetails(req.body);
+    res.status(201).json({ message: 'Infrastructure details created successfully', infrastructureDetailsId });
+  } catch (error) {
+    console.error('Error creating infrastructure details:', error);
+    res.status(500).json({ error: 'Failed to create infrastructure details' });
+  }
+}
+
+// Controller to create new stack details
+async function createStackDetails(req, res) {
+  try {
+    const stackDetailsId = await StackModel.createStackDetails(req.body);
+    res.status(201).json({ message: 'Stack details created successfully', stackDetailsId });
+  } catch (error) {
+    console.error('Error creating stack details:', error);
+    res.status(500).json({ error: 'Failed to create stack details' });
+  }
+}
+
+
+//main all the 
+async function createAsset(req, res) {
+  try {
+    const { assetsId, assetsDetails } = req.body;
+
+    // Create and retrieve each subdocument
+    const basicDetails = assetsDetails.basicDetails;
+    basicDetails.createdAt = new Date();
+
+    const auditLog = {
+      ...assetsDetails.auditLog,
+      auditDate: new Date(assetsDetails.auditLog.auditDate),
+      tlsNextExpireDate: new Date(assetsDetails.auditLog.tlsNextExpireDate),
+      createdAt: new Date(),
+    };
+
+    const infrastructureDetails = {
+      ...assetsDetails.infrastructureDetails,
+      dateOfVA: new Date(assetsDetails.infrastructureDetails.dateOfVA),
+      createdAt: new Date(),
+    };
+
+    const techStackDetails = {
+      ...assetsDetails.techStackDetails,
+      createdAt: new Date(),
+    };
+
+    // Create the asset object with full data instead of IDs
+    const asset = {
+      assetsId,
+      basicDetails,
+      auditLog,
+      infrastructureDetails,
+      techStackDetails,
+      createdAt: new Date(),
+    };
+
+    // Save the asset to the Assets collection
+    const db = getDb();
+    const result = await db.collection('Assets').insertOne(asset);
+
+    res.status(201).json({
+      message: 'Asset created successfully',
+      assetId: result.insertedId,
+    });
+  } catch (error) {
+    console.error('Error creating asset:', error);
+    res.status(500).json({ error: 'Failed to create asset' });
+  }
+}
+
+
 module.exports = {
-  basicDetails
+  basicDetails,
+  createAuditLog,
+  createInfrastructureDetails,
+  createStackDetails,
+  createAsset,
 };
