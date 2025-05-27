@@ -31,7 +31,14 @@ const DigitalAssetsModel = {
     const result = await db.collection('basicProfile').insertOne(user);
     return result.insertedId;
   },
-
+ async delete()
+ {
+console.log("delete called");
+ },
+ async delete1()
+ {
+console.log("delete called");
+ },
   async createAsset(asset) {
     const db = getDb();
     const result = await db.collection('assets').insertOne(asset);
