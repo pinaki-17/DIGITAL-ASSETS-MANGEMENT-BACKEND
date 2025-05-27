@@ -35,6 +35,10 @@ const DigitalAssetsModel = {
  {
 console.log("delete called");
  },
+ async delete1()
+ {
+console.log("delete called");
+ },
   async createAsset(asset) {
     const db = getDb();
     const result = await db.collection('assets').insertOne(asset);
