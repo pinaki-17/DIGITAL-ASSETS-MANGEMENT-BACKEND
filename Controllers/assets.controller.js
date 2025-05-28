@@ -102,6 +102,49 @@ async function createAsset(req, res) {
   }
 }
 
+async function getAsset(req, res) {
+  try {
+    const { assetId } = req.params;
+    const db = getDb();
+    // Using the custom assetsId field for lookup (instead of _id)
+    const asset = await db.collection('Assets').findOne({ assetsId: assetId });
+
+    if (!asset) {
+      return res.status(404).json({ error: 'Asset not found' });
+    }
+
+    const response = {
+      BP: asset.basicDetails,
+      SA: asset.auditLog,
+      Infra: asset.infrastructureDetails,
+      TS: asset.techStackDetails
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('Error fetching asset:', error);
+    res.status(500).json({ error: 'Failed to get asset' });
+  }
+}
+
+async function deleteAsset(req, res) {
+  try {
+    const { assetId } = req.params;
+    const db = getDb();
+    const result = await db.collection('Assets').deleteOne({ assetsId: assetId });
+    
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Asset not found' });
+    }
+    
+    res.status(200).json({ message: 'Asset deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting asset:', error);
+    res.status(500).json({ error: 'Failed to delete asset' });
+  }
+}
+
+
 
 module.exports = {
   basicDetails,
@@ -109,4 +152,6 @@ module.exports = {
   createInfrastructureDetails,
   createStackDetails,
   createAsset,
+ getAsset,
+ deleteAsset
 };
