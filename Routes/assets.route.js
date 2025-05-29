@@ -5,7 +5,7 @@ const router = express.Router();
 const AssetsController = require('../Controllers/assets.controller');
 
 router.post('/assets/createAsset',AssetsController.createAsset);
-router.get('/assets/:assetId', AssetsController.getAsset);
+router.get('/assets/:assetsId', AssetsController.getAsset);
 router.get('/assets/delete/:assetId',AssetsController.deleteAsset);
 module.exports = router;
 

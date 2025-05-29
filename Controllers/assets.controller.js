@@ -1,7 +1,5 @@
 const AssetsModel = require('../Models/assets.model');
-const AuditLogsModel = require('../Models/auditLogs.model');
-const InfrastructureModel = require('../Models/infrastructure.model');
-const StackModel = require('../Models/techstack.model');
+
 const {getDb} = require('../Db/Db')
 
 
@@ -51,50 +49,45 @@ async function createStackDetails(req, res) {
 }
 
 
-//main all the 
 async function createAsset(req, res) {
   try {
     const { assetsId, assetsDetails } = req.body;
 
-    // Create and retrieve each subdocument
-    const basicDetails = assetsDetails.basicDetails;
-    basicDetails.createdAt = new Date();
+    if (!assetsId || !assetsDetails) {
+      return res.status(400).json({ error: 'assetsId and assetsDetails are required' });
+    }
 
-    const auditLog = {
-      ...assetsDetails.auditLog,
-      auditDate: new Date(assetsDetails.auditLog.auditDate),
-      tlsNextExpireDate: new Date(assetsDetails.auditLog.tlsNextExpireDate),
-      createdAt: new Date(),
-    };
+    // Optionally, add createdAt timestamps and convert date fields within assetsDetails
+    if (assetsDetails.BP) {
+      assetsDetails.BP.createdAt = new Date();
+    }
+    if (assetsDetails.SA) {
+      assetsDetails.SA.createdAt = new Date();
+      assetsDetails.SA.auditDate = new Date(assetsDetails.SA.auditDate);
+      // You can also add a field for tlsNextExpireDate if needed, using the tlsnextexpiry value
+      assetsDetails.SA.tlsNextExpireDate = new Date(assetsDetails.SA.tlsnextexpiry);
+    }
+    if (assetsDetails.Infra) {
+      assetsDetails.Infra.createdAt = new Date();
+      assetsDetails.Infra.dateOfVA = new Date(assetsDetails.Infra.dateofva);
+    }
+    if (assetsDetails.TS) {
+      assetsDetails.TS.createdAt = new Date();
+    }
 
-    const infrastructureDetails = {
-      ...assetsDetails.infrastructureDetails,
-      dateOfVA: new Date(assetsDetails.infrastructureDetails.dateOfVA),
-      createdAt: new Date(),
-    };
-
-    const techStackDetails = {
-      ...assetsDetails.techStackDetails,
-      createdAt: new Date(),
-    };
-
-    // Create the asset object with full data instead of IDs
+    // Assemble asset object preserving the original nested assetsDetails format
     const asset = {
       assetsId,
-      basicDetails,
-      auditLog,
-      infrastructureDetails,
-      techStackDetails,
-      createdAt: new Date(),
+      assetsDetails,
+      createdAt: new Date()
     };
 
-    // Save the asset to the Assets collection
     const db = getDb();
     const result = await db.collection('Assets').insertOne(asset);
 
     res.status(201).json({
       message: 'Asset created successfully',
-      assetId: result.insertedId,
+      assetId: result.insertedId
     });
   } catch (error) {
     console.error('Error creating asset:', error);
@@ -104,22 +97,23 @@ async function createAsset(req, res) {
 
 async function getAsset(req, res) {
   try {
-    const { assetId } = req.params;
+    const { assetsId } = req.params;
     const db = getDb();
     // Using the custom assetsId field for lookup (instead of _id)
-    const asset = await db.collection('Assets').findOne({ assetsId: assetId });
-
+    const asset = await db.collection('Assets').findOne({ assetsId: assetsId });
+    
     if (!asset) {
       return res.status(404).json({ error: 'Asset not found' });
     }
-
+    
+    // Return the nested assetsDetails or break it out as needed
     const response = {
-      BP: asset.basicDetails,
-      SA: asset.auditLog,
-      Infra: asset.infrastructureDetails,
-      TS: asset.techStackDetails
+      BP: asset.assetsDetails.BP,
+      SA: asset.assetsDetails.SA,
+      Infra: asset.assetsDetails.Infra,
+      TS: asset.assetsDetails.TS
     };
-
+    
     res.status(200).json(response);
   } catch (error) {
     console.error('Error fetching asset:', error);
@@ -129,9 +123,10 @@ async function getAsset(req, res) {
 
 async function deleteAsset(req, res) {
   try {
-    const { assetId } = req.params;
+    // Use a consistent parameter name (assetsId) to match what you store
+    const { assetsId } = req.params;
     const db = getDb();
-    const result = await db.collection('Assets').deleteOne({ assetsId: assetId });
+    const result = await db.collection('Assets').deleteOne({ assetsId: assetsId });
     
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: 'Asset not found' });
