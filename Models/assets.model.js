@@ -1,129 +1,71 @@
-// const { getDb } = require('../Db/Db');
-// const { ObjectId } = require('mongodb');
 
-// const DigitalAssetsModel = {
-//   // Create a new asset profile using the new payload format
-//   async createBasicProfile(data) {
-//     const db = getDb();
-//     const assetProfile = {
-//       assetsId: data.asset_id, // custom asset id
-//       BP: {
-//         name: data.BP.name,
-//         prismId: data.BP.prismid,
-//         deptName: data.BP.deptname,
-//         url: data.BP.url,
-//         publicIp: data.BP.public_ip,
-//         nodalOfficerNIC: {
-//           name: data.BP.nodalofficerNIC.Name,
-//           empCode: data.BP.nodalofficerNIC.Emp_code,
-//           mobile: data.BP.nodalofficerNIC.Mob,
-//           email: data.BP.nodalofficerNIC.Email,
-//         },
-//         nodalOfficerDept: {
-//           name: data.BP.nodalofficerDept.Name,
-//           designation: data.BP.nodalofficerDept.Designation,
-//           mobile: data.BP.nodalofficerDept.Mob,
-//           email: data.BP.nodalofficerDept.Email,
-//         },
-//       },
-//       SA: {
-//         typeOfAudit: data.SA.typeofaudit,
-//         auditDate: new Date(data.SA.date),
-//         auditingAgency: data.SA.auditingahency,
-//         certificate: data.SA.certi,
-//         sslLabScore: data.SA.ssllabscore,
-//         tlsNextExpiry: new Date(data.SA.tlsnextexpiry),
-//         secondaryAudits: data.SA.Secaudits, // expecting an array
-//       },
-//       Infra: {
-//         typeOfServer: data.Infra.typeofserver,
-//         location: data.Infra.location,
-//         deployment: data.Infra.deployment,
-//         dataCentre: data.Infra.datacentre,
-//         gitURL: data.Infra.giturl, // array of URLs
-//         ipAddress: data.Infra.ipaddress,
-//         purposeOfUse: data.Infra.puposeofuse,
-//         vaScore: data.Infra.vascore,
-//         dateOfVA: new Date(data.Infra.dateofva),
-//         additionalInfra: data.Infra.infra, // expecting an array
-//       },
-//       TS: {
-//         frontEnd: data.TS.frontend, // expecting an array
-//         framework: data.TS.framework,
-//         database: data.TS.database, // expecting an array
-//         os: data.TS.OS, // expecting an array
-//       },
-//       createdAt: new Date(),
-//     };
-
-//     const result = await db.collection('Assets').insertOne(assetProfile);
-//     return result.insertedId;
-//   },
-
-  
-  
-// };
-
-// module.exports = DigitalAssetsModel;
 const { getDb } = require('../Db/Db');
 const { ObjectId } = require('mongodb');
 
 const DigitalAssetsModel = {
-  // ✅ Create a full asset profile
+  // ✅ Create a full asset profile using the provided payload structure
   async createAsset(data) {
     const db = getDb();
 
     const assetProfile = {
       assetsId: data.assetsId, // custom asset ID passed from frontend
-      assetsDetails: {
-        BP: {
-          name: data.assetsDetails.BP.name,
-          prismId: data.assetsDetails.BP.prismid,
-          deptName: data.assetsDetails.BP.deptname,
-          url: data.assetsDetails.BP.url,
-          publicIp: data.assetsDetails.BP.public_ip,
-          nodalOfficerNIC: {
-            name: data.assetsDetails.BP.nodalofficerNIC.Name,
-            empCode: data.assetsDetails.BP.nodalofficerNIC.Emp_code,
-            mobile: data.assetsDetails.BP.nodalofficerNIC.Mob,
-            email: data.assetsDetails.BP.nodalofficerNIC.Email,
-          },
-          nodalOfficerDept: {
-            name: data.assetsDetails.BP.nodalofficerDept.Name,
-            designation: data.assetsDetails.BP.nodalofficerDept.Designation,
-            mobile: data.assetsDetails.BP.nodalofficerDept.Mob,
-            email: data.assetsDetails.BP.nodalofficerDept.Email,
-          },
+      BP: {
+        name: data.BP.name,
+        prismId: data.BP.prismid,
+        deptName: data.BP.deptname,
+        url: data.BP.url,
+        publicIp: data.BP.public_ip,
+        nodalOfficerNIC: {
+          name: data.BP.nodalofficerNIC.Name,
+          empCode: data.BP.nodalofficerNIC.Emp_code,
+          mobile: data.BP.nodalofficerNIC.Mob,
+          email: data.BP.nodalofficerNIC.Email,
         },
-        SA: {
-          typeOfAudit: data.assetsDetails.SA.typeofaudit,
-          auditDate: new Date(data.assetsDetails.SA.auditDate),
-          auditingAgency: data.assetsDetails.SA.auditingagency,
-          certificate: data.assetsDetails.SA.certificate,
-          sslLabScore: data.assetsDetails.SA.sslLabScore,
-          tlsNextExpiry: new Date(data.assetsDetails.SA.tlsnextexpiry),
-          secondaryAudits: data.assetsDetails.SA.secondaryAudits || [],
-        },
-        Infra: {
-          typeOfServer: data.assetsDetails.Infra.typeOfServer,
-          location: data.assetsDetails.Infra.location,
-          deployment: data.assetsDetails.Infra.deployment,
-          dataCentre: data.assetsDetails.Infra.dataCentre,
-          gitURL: data.assetsDetails.Infra.gitURL || [],
-          ipAddress: data.assetsDetails.Infra.ipAddress,
-          purposeOfUse: data.assetsDetails.Infra.purposeOfUse,
-          vaScore: data.assetsDetails.Infra.vaScore,
-          dateOfVA: new Date(data.assetsDetails.Infra.dateOfVA),
-          additionalInfra: data.assetsDetails.Infra.additionalInfra || [],
-        },
-        TS: {
-          frontEnd: data.assetsDetails.TS.frontEnd || [],
-          framework: data.assetsDetails.TS.framework,
-          database: data.assetsDetails.TS.database || [],
-          os: data.assetsDetails.TS.os || [],
+        nodalOfficerDept: {
+          name: data.BP.nodalofficerDept.Name,
+          designation: data.BP.nodalofficerDept.Designation,
+          mobile: data.BP.nodalofficerDept.Mob,
+          email: data.BP.nodalofficerDept.Email,
         },
       },
-      createdAt: new Date()
+     SA: {
+  typeOfAudit: data.SA.typeofaudit,
+  auditDate: new Date(data.SA.auditDate),
+  auditingAgency: data.SA.auditingagency,
+  certificate: data.SA.certificate,
+  sslLabScore: data.SA.sslLabScore,
+  tlsNextExpiry: new Date(data.SA.tlsnextexpiry),
+  securityAudit: (data.SA.secondaryAudits && data.SA.secondaryAudits.length > 0)
+    ? data.SA.secondaryAudits.map((item, index) => ({
+        "Sl no": index + 1,
+        Type: item.typeofaudit || data.SA.typeofaudit,
+        Agency: item.auditingagency || data.SA.auditingagency
+      }))
+    : [{
+        "Sl no": 1,
+        Type: data.SA.typeofaudit,
+        Agency: data.SA.auditingagency
+      }]
+},
+      Infra: {
+        typeOfServer: data.Infra.typeOfServer,
+        location: data.Infra.location,
+        deployment: data.Infra.deployment,
+        dataCentre: data.Infra.dataCentre,
+        giturl: data.Infra.giturl || [],
+        ipAddress: data.Infra.ipAddress,
+        purposeOfUse: data.Infra.purposeOfUse,
+        vaScore: data.Infra.vaScore,
+        dateOfVA: new Date(data.Infra.dateOfVA),
+        additionalInfra: data.Infra.additionalInfra || [],
+      },
+      TS: {
+        frontend: data.TS.frontend || [],
+        framework: data.TS.framework,
+        database: data.TS.database || [],
+        os: data.TS.os || [],
+      },
+      createdAt: new Date(),
     };
 
     const result = await db.collection('Assets').insertOne(assetProfile);
@@ -148,7 +90,7 @@ const DigitalAssetsModel = {
     const db = getDb();
     return await db.collection('Assets').updateOne(
       { assetsId },
-      { $set: { 'assetsDetails.BP': newBP } }
+      { $set: { BP: newBP } }
     );
   },
 
@@ -156,22 +98,22 @@ const DigitalAssetsModel = {
   async updateSA(assetsId, newSA) {
     if (newSA.auditDate) newSA.auditDate = new Date(newSA.auditDate);
     if (newSA.tlsnextexpiry) newSA.tlsNextExpiry = new Date(newSA.tlsnextexpiry);
-
+    
     const db = getDb();
     return await db.collection('Assets').updateOne(
       { assetsId },
-      { $set: { 'assetsDetails.SA': newSA } }
+      { $set: { SA: newSA } }
     );
   },
 
   // ✅ Update Infra section
   async updateInfra(assetsId, newInfra) {
     if (newInfra.dateOfVA) newInfra.dateOfVA = new Date(newInfra.dateOfVA);
-
+    
     const db = getDb();
     return await db.collection('Assets').updateOne(
       { assetsId },
-      { $set: { 'assetsDetails.Infra': newInfra } }
+      { $set: { Infra: newInfra } }
     );
   },
 
@@ -180,7 +122,7 @@ const DigitalAssetsModel = {
     const db = getDb();
     return await db.collection('Assets').updateOne(
       { assetsId },
-      { $set: { 'assetsDetails.TS': newTS } }
+      { $set: { TS: newTS } }
     );
   },
 };
