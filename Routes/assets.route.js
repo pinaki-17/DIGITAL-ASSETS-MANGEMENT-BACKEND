@@ -11,16 +11,14 @@ router.put('/assets/update/bp/:assetsId', AssetsController.updateBP);
 router.put('/assets/update/sa/:assetsId', AssetsController.updateSA);
 router.put('/assets/update/infra/:assetsId', AssetsController.updateInfra);
 router.put('/assets/update/ts/:assetsId', AssetsController.updateTS);
+router.get('/assets/datacentre/:dataCentre', AssetsController.getAssetsByDataCentre);
+router.get('/assets/by-department/:deptName', AssetsController.getAssetsByDepartment);
+router.get('/assets/project/:projectName', AssetsController.getAssetByProjectName);
+
+router.get('/assets/all-projects', AssetsController.getAllProjects);
 module.exports = router;
 
 
 
 
 
-// const AuditController = require('../Controllers/audit.controller')
-// const StackController = require('../Controllers/stack.controller')
-// const InfrastructureController = require('../Controllers/infrastructure.controller');
-// router.post('/assets/createProfile', AssetsController.basicDetails);
-// router.post('/audit/create', AuditController.createAuditLog);
-// router.post('/stack/create', StackController.createStackDetails);
-// router.post('/info/create', InfrastructureController.createInfrastructureDetails);

@@ -1,6 +1,5 @@
-
-const { getDb } = require('../Db/Db');
-const { ObjectId } = require('mongodb');
+const { getDb } = require("../Db/Db");
+const { ObjectId } = require("mongodb");
 
 const DigitalAssetsModel = {
   // ✅ Create a full asset profile using the provided payload structure
@@ -28,25 +27,28 @@ const DigitalAssetsModel = {
           email: data.BP.nodalofficerDept.Email,
         },
       },
-     SA: {
-  typeOfAudit: data.SA.typeofaudit,
-  auditDate: new Date(data.SA.auditDate),
-  auditingAgency: data.SA.auditingagency,
-  certificate: data.SA.certificate,
-  sslLabScore: data.SA.sslLabScore,
-  tlsNextExpiry: new Date(data.SA.tlsnextexpiry),
-  securityAudit: (data.SA.secondaryAudits && data.SA.secondaryAudits.length > 0)
-    ? data.SA.secondaryAudits.map((item, index) => ({
-        "Sl no": index + 1,
-        Type: item.typeofaudit || data.SA.typeofaudit,
-        Agency: item.auditingagency || data.SA.auditingagency
-      }))
-    : [{
-        "Sl no": 1,
-        Type: data.SA.typeofaudit,
-        Agency: data.SA.auditingagency
-      }]
-},
+      SA: {
+        typeOfAudit: data.SA.typeofaudit,
+        auditDate: new Date(data.SA.auditDate),
+        auditingAgency: data.SA.auditingagency,
+        certificate: data.SA.certificate,
+        sslLabScore: data.SA.sslLabScore,
+        tlsNextExpiry: new Date(data.SA.tlsnextexpiry),
+        securityAudit:
+          data.SA.secondaryAudits && data.SA.secondaryAudits.length > 0
+            ? data.SA.secondaryAudits.map((item, index) => ({
+                "Sl no": index + 1,
+                Type: item.typeofaudit || data.SA.typeofaudit,
+                Agency: item.auditingagency || data.SA.auditingagency,
+              }))
+            : [
+                {
+                  "Sl no": 1,
+                  Type: data.SA.typeofaudit,
+                  Agency: data.SA.auditingagency,
+                },
+              ],
+      },
       Infra: {
         typeOfServer: data.Infra.typeOfServer,
         location: data.Infra.location,
@@ -68,63 +70,64 @@ const DigitalAssetsModel = {
       createdAt: new Date(),
     };
 
-    const result = await db.collection('Assets').insertOne(assetProfile);
+    const result = await db.collection("Assets").insertOne(assetProfile);
     return result.insertedId;
   },
 
   // ✅ Get full asset by custom asset ID
   async getAssetByAssetsId(assetsId) {
     const db = getDb();
-    const asset = await db.collection('Assets').findOne({ assetsId });
+    const asset = await db.collection("Assets").findOne({ assetsId });
     return asset;
   },
 
   // ✅ Delete asset by custom asset ID
   async deleteAsset(assetsId) {
     const db = getDb();
-    return await db.collection('Assets').deleteOne({ assetsId });
+    return await db.collection("Assets").deleteOne({ assetsId });
   },
 
   // ✅ Update BP section
   async updateBP(assetsId, newBP) {
     const db = getDb();
-    return await db.collection('Assets').updateOne(
-      { assetsId },
-      { $set: { BP: newBP } }
-    );
+    return await db
+      .collection("Assets")
+      .updateOne({ assetsId }, { $set: { BP: newBP } });
   },
 
   // ✅ Update SA section
   async updateSA(assetsId, newSA) {
     if (newSA.auditDate) newSA.auditDate = new Date(newSA.auditDate);
-    if (newSA.tlsnextexpiry) newSA.tlsNextExpiry = new Date(newSA.tlsnextexpiry);
-    
+    if (newSA.tlsnextexpiry)
+      newSA.tlsNextExpiry = new Date(newSA.tlsnextexpiry);
+
     const db = getDb();
-    return await db.collection('Assets').updateOne(
-      { assetsId },
-      { $set: { SA: newSA } }
-    );
+    return await db
+      .collection("Assets")
+      .updateOne({ assetsId }, { $set: { SA: newSA } });
   },
 
   // ✅ Update Infra section
   async updateInfra(assetsId, newInfra) {
     if (newInfra.dateOfVA) newInfra.dateOfVA = new Date(newInfra.dateOfVA);
-    
+
     const db = getDb();
-    return await db.collection('Assets').updateOne(
-      { assetsId },
-      { $set: { Infra: newInfra } }
-    );
+    return await db
+      .collection("Assets")
+      .updateOne({ assetsId }, { $set: { Infra: newInfra } });
   },
 
   // ✅ Update TS section
   async updateTS(assetsId, newTS) {
     const db = getDb();
-    return await db.collection('Assets').updateOne(
-      { assetsId },
-      { $set: { TS: newTS } }
-    );
+    return await db
+      .collection("Assets")
+      .updateOne({ assetsId }, { $set: { TS: newTS } });
   },
+
+  
 };
+
+
 
 module.exports = DigitalAssetsModel;
