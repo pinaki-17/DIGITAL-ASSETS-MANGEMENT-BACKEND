@@ -34,20 +34,14 @@ const DigitalAssetsModel = {
         certificate: data.SA.certificate,
         sslLabScore: data.SA.sslLabScore,
         tlsNextExpiry: new Date(data.SA.tlsnextexpiry),
-        // securityAudit:
-        //   data.SA.secondaryAudits && data.SA.secondaryAudits.length > 0
-        //     ? data.SA.secondaryAudits.map((item, index) => ({
-        //         "Sl no": index + 1,
-        //         Type: item.typeofaudit || data.SA.typeofaudit,
-        //         Agency: item.auditingagency || data.SA.auditingagency,
-        //       }))
-        //     : [
-        //         {
-        //           "Sl no": 1,
-        //           Type: data.SA.typeofaudit,
-        //           Agency: data.SA.auditingagency,
-        //         },
-        //       ],
+        securityAudit:
+           [
+                {
+                  "Sl no": 1,
+                  Type: data.SA.typeofaudit,
+                  Agency: data.SA.auditingagency,
+                },
+              ],
       },
       Infra: {
         typeOfServer: data.Infra.typeOfServer,
