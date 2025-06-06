@@ -59,11 +59,15 @@ async function deleteUser(req, res) {
 async function login(req, res) {
   try {
     const { assetsId, password } = req.body;
-    const user = await UserModel.getUserById(assetsId);
-    if (!user || user.password !== password) {
+    console.log('Login payload:', req.body);
+
+    const user = await UserModel.findByLogin(assetsId, password);
+    console.log('User found:', user);
+
+    if (!user) {
+      console.log('No user found with provided credentials');
       return res.status(401).json({ error: "Invalid credentials" });
     }
-    // For demo: set a simple session flag (replace with JWT/session in production)
     req.session = req.session || {};
     req.session.user = { assetsId: user.assetsId };
     res.status(200).json({ message: "Login successful" });

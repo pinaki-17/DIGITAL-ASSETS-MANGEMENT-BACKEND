@@ -9,7 +9,10 @@ const app = express();
 
 // Middleware Setup
 // Order matters for middleware!
-app.use(cors()); // Enable CORS for all routes
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow only your frontend origin
+  credentials: true                // Allow cookies and credentials
+}));
 app.use(express.json({ limit: '50mb' })); // Parse JSON bodies with a larger limit
 app.use(express.urlencoded({ limit: '50mb', extended: true })); // Parse URL-encoded bodies
 

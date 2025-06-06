@@ -1,36 +1,44 @@
 const { getDb } = require("../Db/Db");
+const bcrypt = require("bcrypt");
 
 const UserModel = {
-  // Create a new user
   async createUser(data) {
     const db = getDb();
+    const hashedPassword = await bcrypt.hash(data.password, 10);
     const userProfile = {
-      assetsId: data.assetsId, // user ID
-      password: data.password, // hashed password recommended
+      assetsId: data.assetsId,
+      password: hashedPassword,
       createdAt: new Date(),
     };
     const result = await db.collection("Users").insertOne(userProfile);
     return result.insertedId;
   },
 
-  // Get user by assetsId (user ID)
   async getUserById(assetsId) {
     const db = getDb();
     return await db.collection("Users").findOne({ assetsId });
   },
 
-  // Update user password
   async updatePassword(assetsId, newPassword) {
     const db = getDb();
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
     return await db
       .collection("Users")
-      .updateOne({ assetsId }, { $set: { password: newPassword } });
+      .updateOne({ assetsId }, { $set: { password: hashedPassword } });
   },
 
-  // Delete user by assetsId
   async deleteUser(assetsId) {
     const db = getDb();
     return await db.collection("Users").deleteOne({ assetsId });
+  },
+
+  async findByLogin(assetsId, password) {
+    const db = getDb();
+    const user = await db.collection("Users").findOne({ assetsId });
+    if (!user) return null;
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    return isMatch ? user : null;
   },
 };
 
